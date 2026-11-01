@@ -1,6 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Login.css";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../Context";
+import { jwtDecode } from "jwt-decode";
 function Login() {
+  const {user,setUser}= useAppContext();
+  const navigate = useNavigate();
+  useEffect(() => {
+        if (localStorage.getItem("token") != null) {
+            const decoded = jwtDecode(localStorage.getItem("token"));
+            if (decoded.exp < Date.now() / 1000) {
+                localStorage.removeItem("token");
+                toast.warn("Session Expired! Please login again")
+            } else {
+                if (decoded) {
+                    navigate("/")
+                }
+            }
+        }
+    }, [user]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -12,9 +31,25 @@ function Login() {
       password,
     });
 
-    // Later:
-    // Call your Java Spring Bo
-    // ot login API here.
+    fetch(`${import.meta.env.VITE_API_POINT}/api/login`,{
+      method:"POST",
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({userEmail:email,password:password})
+    }).then((responce)=>{
+      return responce.json();
+    }).then((data)=>{
+      console.log(data)
+      if(data.success){
+        localStorage.setItem("token",data.token)
+        toast.success("User Logged in Successfuly!")
+        navigate("/")
+        return;
+      }
+    }).catch((e)=>{
+      console.log(e)
+    })
   };
 
   return (

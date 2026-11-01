@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Rocket, Menu, X, ChevronDown, User, LogOut, ClipboardList, MessageSquareWarning } from 'lucide-react';
 import Container from './Container';
 import Button from './Button';
-
+import { useAppContext } from '../../Context';
 const NAV_LINKS = [
     { label: "Home", href: "/" },
     { label: "About", href: "/#about" },
@@ -28,10 +28,10 @@ function getDisplayName(user) {
     return user?.name || user?.fullName || user?.username || user?.email || "My Account";
 }
 
-function Header({ user: userProp, onLogout }) {
+function Header({ user: userProp }) {
     // user === null  -> not logged in
     // user !== null  -> logged in
-    const user = {name:"Kratika Gupta"};
+      const {user,setUser}= useAppContext();
     const userName = user ? getDisplayName(user) : "";
     const initial = userName.charAt(0).toUpperCase();
 
@@ -56,21 +56,17 @@ function Header({ user: userProp, onLogout }) {
             document.removeEventListener("keydown", handleKey);
         };
     }, []);
-
+    
     function handleLogout() {
         setProfileOpen(false);
         setOpen(false);
-        if (onLogout) {
-            onLogout();
-            return;
-        }
+        setUser(null);
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
         window.location.href = "/login";
     }
 
     return (
-        <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/90 backdrop-blur">
+        <header className="sticky top-0 z-5000 border-b border-slate-100 bg-white/90 backdrop-blur">
             <Container>
                 <nav
                     className="flex h-16 items-center justify-between"
@@ -122,7 +118,7 @@ function Header({ user: userProp, onLogout }) {
                                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-sm font-semibold text-white">
                                             {initial}
                                         </span>
-                                        <span className="max-w-[9rem] truncate">{userName}</span>
+                                        <span className="max-w-36 truncate">{userName}</span>
                                         <ChevronDown
                                             className={`h-4 w-4 text-slate-400 transition-transform ${profileOpen ? "rotate-180" : ""}`}
                                             aria-hidden="true"

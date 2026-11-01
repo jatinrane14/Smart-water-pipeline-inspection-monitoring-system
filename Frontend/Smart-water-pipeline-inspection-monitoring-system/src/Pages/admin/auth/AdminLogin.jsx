@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import {
   ShieldCheck,
   Droplets,
@@ -10,17 +10,26 @@ import {
   ChevronDown,
   Waves,
 } from "lucide-react";
-
-const roles = [
-  "System Administrator",
-  "Operations Manager",
-  "Pipeline Inspector",
-  "Maintenance Engineer",
-  "Control Room Operator",
-];
-
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { useAppContext } from "../../../Context";
 export default function AdminLogin() {
-  const [role, setRole] = useState(roles[0]);
+  const navigate = useNavigate();
+  const {user } = useAppContext();
+  useEffect(() => {
+          if (localStorage.getItem("token") != null) {
+              const decoded = jwtDecode(localStorage.getItem("token"));
+              if (decoded.exp < Date.now() / 1000) {
+                  localStorage.removeItem("token");
+                  toast.warn("Session Expired! Please login again")
+              } else {
+                  if (decoded) {
+                      navigate("/admin")
+                  }
+              }
+          }
+      }, [user]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -39,13 +48,25 @@ export default function AdminLogin() {
     }
 
     // Connect this handler to your Spring Boot authentication API.
-    fetch('',{
+    fetch(`${import.meta.env.VITE_API_POINT}/api/admin/login`,{
+      method:"POST",
       headers:{
-        
+        'Content-Type':"application/json"
       },
-      data:JSON.stringify(data)
+      body:JSON.stringify({ userEmail:email, password:password })
+    }).then((responce)=>{
+      return responce.json();
+    }).then((data)=>{
+      console.log(data)
+      if(data.success){
+        localStorage.setItem("token",data.token)
+        toast.success("User Logged in Successfuly!")
+        navigate("/admin")
+        return;
+      }
+    }).catch((e)=>{
+      console.log(e)
     })
-    console.log({ email, password, role });
   };
 
   return (
@@ -82,7 +103,7 @@ export default function AdminLogin() {
               Monitor smarter.
               <span className="mt-2 block text-cyan-300">
                 Protect every pipeline.
-              </span>
+              </span> 
             </h2>
             <p className="mt-5 max-w-sm text-sm leading-7 text-slate-400">
               A centralized workspace for pipeline inspections,
@@ -125,28 +146,7 @@ export default function AdminLogin() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="mb-2 block text-sm font-medium text-slate-300">
-                Administrative role
-              </label>
-              <div className="relative">
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="w-full appearance-none rounded-xl border border-slate-700 bg-[#101f30] px-4 py-3.5 pr-11 text-sm outline-none transition focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/10"
-                >
-                  {roles.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown
-                  size={18}
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
-                />
-              </div>
-            </div>
+            
 
             <div>
               <label className="mb-2 block text-sm font-medium text-slate-300">

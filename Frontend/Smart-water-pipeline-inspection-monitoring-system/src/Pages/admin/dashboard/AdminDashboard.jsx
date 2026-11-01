@@ -31,173 +31,8 @@ import GISMapSection from "./Sections/GISMapSection";
 import ReportsSection from "./Sections/Reports";
 import { useContext } from "react";
 import { useAppContext } from "../../../Context";
+import { jwtDecode } from "jwt-decode";
 
-const PIPELINES = [
-  // NorthSide
-  { pipelineCode: "PL-1001-R", 
-    pipelineName: "Nagin Nagar - P-1001", 
-    diameterMm: "150mm", 
-    material: "Ductile Iron", 
-    location: "Nagin nagar ", 
-    length: "1.2 km", 
-    condition: "Critical", 
-    updatedAt: "2026-09-12", 
-    operationalStatus: "Active", 
-    installationDate:"",
-    route: [
-          [
-            75.8228019,
-            22.7163648
-          ],
-          [
-            75.8236785,
-            22.7163242
-          ]
-        ]
-  },
-  { id: "PL-1001", 
-    name: "Nagin Nagar -", 
-    diameter: "150mm", 
-    material: "Ductile Iron", 
-    location: "MG Road, Indore", 
-    length: "1.2 km", 
-    condition: "Critical", 
-    lastInspection: "2026-09-12", 
-    status: "Active", 
-    route: [
-          [
-            75.8227964,
-            22.7163545
-          ],
-          [
-            75.8227964,
-            22.7160128
-          ]
-        ]
-  },
-  { id: "PL-1001", 
-    name: "Nagin Nagar -", 
-    diameter: "150mm", 
-    material: "Ductile Iron", 
-    location: "MG Road, Indore", 
-    length: "1.2 km", 
-    condition: "Critical", 
-    lastInspection: "2026-09-12", 
-    status: "Active", 
-    path: [
-           [
-            75.8227781,
-            22.7159688
-          ],
-          [
-            75.8227231,
-            22.7153903
-          ]
-        ]
-  },
-  { id: "PL-1001", 
-    name: "Nagin Nagar -", 
-    diameter: "150mm", 
-    material: "Ductile Iron", 
-    location: "MG Road, Indore", 
-    length: "1.2 km", 
-    condition: "Critical", 
-    lastInspection: "2026-09-12", 
-    status: "Active", 
-    path:  [
-          [
-            75.8227084,
-            22.7153531
-          ],
-          [
-            75.8226864,
-            22.7149911
-          ]
-        ]
-  },
-  { id: "PL-1001", 
-    name: "Nagin Nagar -", 
-    diameter: "150mm", 
-    material: "Ductile Iron", 
-    location: "MG Road, Indore", 
-    length: "1.2 km", 
-    condition: "Critical", 
-    lastInspection: "2026-09-12", 
-    status: "Active", 
-    path:  [
-          [
-            75.8228162,
-            22.7163612
-          ],
-          [
-            75.8236767,
-            22.7163132
-          ]
-        ]
-  },
-  { id: "PL-1001", 
-    name: "Nagin Nagar -", 
-    diameter: "150mm", 
-    material: "Ductile Iron", 
-    location: "MG Road, Indore", 
-    length: "1.2 km", 
-    condition: "Critical", 
-    lastInspection: "2026-09-12", 
-    status: "Active", 
-    path:  [
-          [
-            75.8237179,
-            22.7163633
-          ],
-          [
-            75.8237594,
-            22.7168881
-          ]
-        ]
-  },
-  { id: "PL-1001", 
-    name: "Nagin Nagar -", 
-    diameter: "150mm", 
-    material: "Ductile Iron", 
-    location: "MG Road, Indore", 
-    length: "1.2 km", 
-    condition: "Critical", 
-    lastInspection: "2026-09-12", 
-    status: "Active", 
-    path:  [
-         [
-            75.8237565,
-            22.7168908
-          ],
-          [
-            75.8241743,
-            22.7168525
-          ]
-        ]
-  },
-  { id: "PL-1001", 
-    name: "Nagin Nagar -", 
-    diameter: "150mm", 
-    material: "Ductile Iron", 
-    location: "MG Road, Indore", 
-    length: "1.2 km", 
-    condition: "Critical", 
-    lastInspection: "2026-09-12", 
-    status: "Active", 
-    path: [
-          [
-            75.8242039,
-            22.7168498
-          ],
-          [
-            75.824678,
-            22.7168061
-          ]
-        ]
-  },
-// South Hand
-
-];
 
 const INITIAL_EVENTS = [
   { id: "EV-9001", pipelineId: "PL-1005", type: "Leak", location: "Bhawarkuan, Indore", detected: "2026-09-24 09:14", source: "Acoustic Sensor", severity: "Critical", status: "Open", simulated: false },
@@ -304,16 +139,18 @@ function SettingsSection() {
    LAYOUT: SIDEBAR
    ------------------------------------------------------------ */
 
-function Sidebar({ active, onSelect, mobileOpen, onCloseMobile, user }) {
+function Sidebar({
+  active,
+  onSelect,
+  mobileOpen,
+  onCloseMobile,
+  allowedSections = []
+}) {
 
-  // Filter navigation items based on role
-  const filteredNavItems = NAV_ITEMS.filter((item) => {
-    if (item.key === "users") {
-      return user?.subRole === "SYSTEM_ADMIN";
-    }
-
-    return true;
-  });
+  // Show only navigation links permitted for the designation
+  const filteredNavItems = NAV_ITEMS.filter((item) =>
+    allowedSections.includes(item.key)
+  );
 
   return (
     <>
@@ -360,35 +197,59 @@ function Sidebar({ active, onSelect, mobileOpen, onCloseMobile, user }) {
             );
           })}
         </nav>
-
-        {/* Keep your existing SYSTEM STATUS section here */}
       </aside>
     </>
   );
 }
-
 /* ------------------------------------------------------------
    ROOT COMPONENT
    ------------------------------------------------------------ */
 
 export default function AdminDashboard() {
-
-  const {user}= useAppContext();
-  console.log(user);
+  const [PIPELINES,setPIPELINE] = useState([]);
+  const {user,setUser}= useAppContext();
   const navigate = useNavigate();
-  useEffect(()=>{
-    const token =  localStorage.getItem("session")
-    console.log(token);
-    
-    // if(token!=null){
-    //   console.log("Dashboard");
-      
-    // }else{
-    //   console.log("Login...");
-      
-    //   navigate("/admin/login");
-    // }
-},[])
+  useEffect(() => {
+        if (localStorage.getItem("token") != null) {
+            const decoded = jwtDecode(localStorage.getItem("token"));
+            if (decoded.exp < Date.now() / 1000) {
+                localStorage.removeItem("token");
+                toast.warn("Session Expired! Please login again")
+            } else {
+                if (decoded) {
+                  if(decoded.role!="ADMIN"){
+                    navigate("/");
+                  }
+                }
+            }
+        }
+    }, [user]);
+
+    useEffect(()=>{
+      fetch(`${import.meta.env.VITE_API_POINT}/sensor-data`,{
+        method:"GET",
+        headers:{
+          'Content-Type':"application/json"
+        }
+      }).then((responce)=>{
+        return responce.json();
+      }).then((data)=>{
+        console.log(data);
+        const formattedData = data.map((item) => ({
+          ...item,
+          route: item.routes
+          ? JSON.parse(item.routes).coordinates
+        : []
+        }));
+        console.log(formattedData);
+        
+        setPIPELINE(formattedData);
+      }).catch((e)=>{
+        console.log(e);
+      })
+    },[])
+
+
   const [active, setActive] = useState("dashboard");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
@@ -433,7 +294,7 @@ export default function AdminDashboard() {
 };
 
 function renderSection() {
-  const allowedSections = ROLE_ACCESS[user.subRole] || [];
+  const allowedSections = ROLE_ACCESS[user?.designation] || [];
   console.log("New",allowedSections );
   
   if (!allowedSections.includes(active)) {
@@ -457,14 +318,14 @@ function renderSection() {
     case "pipelines":
       return <PipelinesSection PIPELINES={PIPELINES} />;
 
-    case "inspections":
-      return <InspectionsSection />;
+    // case "inspections":
+    //   return <InspectionsSection />;
 
     case "gis":
       return <GISMapSection PIPELINES={PIPELINES} />;
 
     case "events":
-      return <EventsSection />;
+      return <EventsSection INITIAL_EVENTS={INITIAL_EVENTS}/>;
 
     case "complaints":
       return <ComplaintsSection />;
@@ -476,7 +337,7 @@ function renderSection() {
       return <ReportsSection />;
 
     case "users":
-      if(user.subRole=="SYSTEM_ADMIN"){
+      if(user.designation=="SYSTEM_ADMIN"){
         return <UsersSection />;
       }
     case "settings":
@@ -489,11 +350,12 @@ function renderSection() {
   return (
     <div id="dashboard" className="flex h-screen bg-gray-50 text-gray-800">
       <Sidebar
-        active={active}
-        onSelect={setActive}
-        mobileOpen={mobileOpen}
-        onCloseMobile={() => setMobileOpen(false)}
-      />
+  active={active}
+  onSelect={setActive}
+  mobileOpen={mobileOpen}
+  onCloseMobile={() => setMobileOpen(false)}
+  allowedSections={ROLE_ACCESS[user?.designation] || []}
+/>
 
       <div className="flex-1 flex flex-col min-w-0">
         <Header onMenuClick={() => setMobileOpen(true)} onLogoutRequest={() => setLogoutModalOpen(true)} />

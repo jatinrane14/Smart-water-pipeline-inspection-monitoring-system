@@ -6,8 +6,8 @@ import { Polyline } from "react-leaflet";
 import { Popup } from "react-leaflet";
 
 function conditionColor(condition) {
-  if (condition === "Normal") return "#2563eb"; // blue
-  if (condition === "Moderate") return "#f59e0b"; // yellow/amber
+  if (condition === "HEALTHY") return "#2563eb"; // blue
+  if (condition === "MODERATE") return "#f59e0b"; // yellow/amber
   return "#dc2626"; // damaged / critical -> red
 }
 
@@ -16,7 +16,7 @@ function GISMapSection({PIPELINES}) {
   const [filter, setFilter] = useState("All");
   const [selected, setSelected] = useState(null);
 
-  const filtered = PIPELINES.filter((p) => filter === "All" || p.condition === filter);
+  const filtered = PIPELINES.filter((p) => filter === "All" || p.conditionStatus === filter);
 
   return (
     <div>
@@ -50,7 +50,7 @@ function GISMapSection({PIPELINES}) {
                 <Polyline
                   key={p.id}
                   positions={p.route.map(([x, y]) => [y, x])}
-                  pathOptions={{ color: conditionColor(p.condition), weight: 5 }}
+                  pathOptions={{ color: conditionColor(p.conditionStatus), weight: 5 }}
                   eventHandlers={{ click: () => setSelected(p) }}
                 >
                   <Popup>
