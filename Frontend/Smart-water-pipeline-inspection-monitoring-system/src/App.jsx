@@ -9,6 +9,9 @@ import AdminLogin from './Pages/admin/auth/AdminLogin';
 import AdminDashboard from './Pages/admin/dashboard/AdminDashboard';
 import { AppContext } from './Context'
 import Register from './Pages/auth/Register'
+import Complaint from "./Pages/Complaint";
+import CitizenProfile from "./Pages/CitizenProfile";
+import MyComplaints from "./Pages/MyComplaints";
 function App() {
   const [user,setUser] = useState({
     success:true,
@@ -35,11 +38,15 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin></AdminLogin>}/>
         <Route path="/admin" element={<AdminDashboard></AdminDashboard>}/>
         <Route path="/register" element={<Register />} />
+
+        {/* Citizen pages */}
+        <Route path="/report-issue" element={<Complaint />} />
+        <Route path="/citizen/profile" element={<CitizenProfile />} />
+        <Route path="/citizen/complaints" element={<MyComplaints />} />
       </Routes>
       {!location.pathname=="/admin" && <Footer/>}
     </AppContext.Provider>
-
-  )
+  );
 }
 
-export default App
+export default App;
