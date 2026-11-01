@@ -30,6 +30,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpS)  throws Exception {
         return httpS.csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
+                .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(auth -> auth
 
                         .anyRequest().permitAll()

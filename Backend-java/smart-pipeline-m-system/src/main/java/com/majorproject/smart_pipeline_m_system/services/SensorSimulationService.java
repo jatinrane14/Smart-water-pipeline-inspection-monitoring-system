@@ -206,7 +206,6 @@ public class SensorSimulationService {
             result.put("sensorDataId", saved.getId());
 
             result.put("operation", isNewRecord ? "CREATED" : "UPDATED");
-
             result.put("pressure", pressure);
             result.put("flow", flow);
             result.put("temperature", temperature);

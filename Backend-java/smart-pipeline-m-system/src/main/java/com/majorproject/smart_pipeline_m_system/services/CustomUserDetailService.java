@@ -23,6 +23,7 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserBaseModel user=null;
         user = citizenUserRepo.findByUserEmail(username);
+        System.out.print("From Load: "+user.getUserEmail());
         if(user ==null){
             user = adminUserRepo.findByUserEmail(username);
         }
