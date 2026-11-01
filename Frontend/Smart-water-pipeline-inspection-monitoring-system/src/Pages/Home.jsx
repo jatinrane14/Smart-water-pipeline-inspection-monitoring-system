@@ -1,13 +1,14 @@
-import React from "react";
-import Header from "../Components/Common/Header"
-import { useNavigate } from "react-router-dom"
-function Home(){
-    const navigate = useNavigate();
+import { useState } from "react";
+import Button from "../Components/Common/Button";
+import Container from "../Components/Common/Container";
+/* ---------- Data ---------- */
  
-    return (
-        <React.Fragment>
-            <button onClick={()=>(navigate("/admin"))}>Login</button>
-        </React.Fragment>
-    )
+export default function Home() {
+  return (
+    <div className="min-h-screen bg-white font-sans text-slate-800 antialiased">
+      <main>
+        
+      </main>
+    </div>
+  );
 }
-export default Home;

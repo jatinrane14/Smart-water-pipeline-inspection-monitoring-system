@@ -8,6 +8,7 @@ import Login from './Pages/auth/Login'
 import AdminLogin from './Pages/admin/auth/AdminLogin';
 import AdminDashboard from './Pages/admin/dashboard/AdminDashboard';
 import { AppContext } from './Context'
+import Register from './Pages/auth/Register'
 function App() {
   const [user,setUser] = useState({
     success:true,
@@ -33,6 +34,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/admin/login" element={<AdminLogin></AdminLogin>}/>
         <Route path="/admin" element={<AdminDashboard></AdminDashboard>}/>
+        <Route path="/register" element={<Register />} />
       </Routes>
       {!location.pathname=="/admin" && <Footer/>}
     </AppContext.Provider>
