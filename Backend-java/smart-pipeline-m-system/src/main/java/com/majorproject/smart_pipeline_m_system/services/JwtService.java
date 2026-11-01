@@ -25,6 +25,7 @@ public class JwtService {
     public String generateToken(String username, Role role, UserBaseModel dbUser){
         Map<String,Object> claims=  new HashMap<>();
         claims.put("role",role);
+        claims.put("name",dbUser.getName());
         if(dbUser instanceof AdminUserModel officer){
             claims.put("designation",officer.getDesigination());
         }

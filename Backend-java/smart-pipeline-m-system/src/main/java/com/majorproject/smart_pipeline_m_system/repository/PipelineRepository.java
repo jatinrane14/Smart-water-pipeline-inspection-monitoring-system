@@ -23,7 +23,11 @@ public interface PipelineRepository extends JpaRepository<PipelineModel, Long> {
             p.diameter_mm AS diameterMm,
             p.material AS material,
             p.operational_status AS operationalStatus,
-
+            ST_AsGeoJSON(p.route) AS routes,
+            p.zone AS zone,
+            p.created_at AS createdAt,
+            p.length_m AS lengthM,
+            
             s.id AS sensorDataId,
             s.pressure_sensor AS pressureSensor,
             s.flow_meter AS flowMeter,
@@ -47,7 +51,11 @@ public interface PipelineRepository extends JpaRepository<PipelineModel, Long> {
             p.diameter_mm AS diameterMm,
             p.material AS material,
             p.operational_status AS operationalStatus,
-
+            ST_AsGeoJSON(p.route) AS routes,
+            p.zone AS zone,
+            p.created_at AS createdAt,
+            p.length_m AS lengthM,
+            
             s.id AS sensorDataId,
             s.pressure_sensor AS pressureSensor,
             s.flow_meter AS flowMeter,

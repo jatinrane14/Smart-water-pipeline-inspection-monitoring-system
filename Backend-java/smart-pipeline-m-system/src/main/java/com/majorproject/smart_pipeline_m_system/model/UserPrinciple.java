@@ -22,12 +22,12 @@ public class UserPrinciple implements UserDetails {
 
     @Override
     public @Nullable String getPassword() {
-        return "";
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return "";
+        return user.getUserName();
     }
 
     @Override
