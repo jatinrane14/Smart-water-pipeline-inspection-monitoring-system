@@ -1,13 +1,11 @@
 package com.majorproject.smart_pipeline_m_system.model;
 
 import jakarta.persistence.*;
-import org.apache.catalina.Pipeline;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Table(name = "pipeline_sensor_data")
+@Entity
 public class PipelineSensorData {
 
     @Id

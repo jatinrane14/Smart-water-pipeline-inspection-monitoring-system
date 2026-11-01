@@ -2,20 +2,30 @@ package com.majorproject.smart_pipeline_m_system.services;
 
 import com.majorproject.smart_pipeline_m_system.model.PipelineModel;
 import com.majorproject.smart_pipeline_m_system.model.PipelineSensorData;
+import com.majorproject.smart_pipeline_m_system.projection.PipelineSensorFullJoinProjection;
+import com.majorproject.smart_pipeline_m_system.repository.PipelineRepository;
+import com.majorproject.smart_pipeline_m_system.repository.PipelineSensorDataRepo;
 import com.majorproject.smart_pipeline_m_system.repository.PipelinerRepo;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.lang.Math.random;
 
@@ -24,10 +34,17 @@ public class PipelineServices {
     @Autowired
     PipelinerRepo pipelinerRepo;
 
-    public ResponseEntity<List<PipelineModel>> getPipelines(){
-        List<PipelineModel> data   = pipelinerRepo.findAll();
-        return ResponseEntity.ok(data);
+
+    PipelineSensorDataRepo pipelineSensorDataRepo;
+    @Autowired
+    PipelineRepository pipelineRepository;
+
+    @Transactional(readOnly = true)
+    public List<PipelineSensorFullJoinProjection> getAllPipelinesWithSensorData() {
+
+        return pipelineRepository.findAllPipelinesWithSensorData();
     }
+
 
 
     public ResponseEntity<PipelineModel> addPipeline(Map<String,Object> pipelineDetail){
@@ -63,8 +80,6 @@ public class PipelineServices {
         return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
-
-    //    Genrate Data
 
 }
 
