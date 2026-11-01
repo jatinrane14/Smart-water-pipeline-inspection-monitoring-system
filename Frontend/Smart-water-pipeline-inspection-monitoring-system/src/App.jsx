@@ -12,26 +12,31 @@ import Register from './Pages/auth/Register'
 import Complaint from "./Pages/Complaint";
 import CitizenProfile from "./Pages/CitizenProfile";
 import MyComplaints from "./Pages/MyComplaints";
+import { jwtDecode } from "jwt-decode";
 function App() {
-  const [user,setUser] = useState({
-    success:true,
-    mssage:"",
-    token:"",
-    role:"ADMIN",
-    subRole:"OPERATIONS_MANAGER"
-  });
+  const [user,setUser] = useState(null);
 
  useEffect(()=>{
+  if (localStorage.getItem("token") !== null) {
+      const decoded = jwtDecode(localStorage.getItem("token"));
+      if (decoded.exp < Date.now() / 1000) {
+        localStorage.removeItem("token");
+      } else {
+        if (decoded) {
+          console.log(decoded);
+          setUser(decoded);
+        }
+      }
+    }
 
   },[localStorage.getItem("token")])
   
   let location = useLocation();
-  console.log(location.pathname);
   
   return (
     
-    <AppContext.Provider value={{user}}>
-          {!location.pathname=="/admin"&&<Header/>} 
+    <AppContext.Provider value={{user,setUser}}>
+          {!(location.pathname=="/admin")&&<Header/>} 
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

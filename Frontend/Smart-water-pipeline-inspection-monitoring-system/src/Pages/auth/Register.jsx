@@ -1,11 +1,30 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../Context";
+import { jwtDecode } from "jwt-decode";
 const Register = () => {
+
+  const {user,setUser}= useAppContext();
+  const navigate = useNavigate();
+  useEffect(() => {
+        if (localStorage.getItem("token") != null) {
+            const decoded = jwtDecode(localStorage.getItem("token"));
+            if (decoded.exp < Date.now() / 1000) {
+                localStorage.removeItem("token");
+                toast.warn("Session Expired! Please login again")
+            } else {
+                if (decoded) {
+                    navigate("/")
+                }
+            }
+        }
+    }, [user]);
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
+    userEmail: "",
     password: "",
     confirmPassword: "",
+    role:"CITIZEN"
   });
 
   const handleChange = (e) => {
@@ -22,8 +41,19 @@ const Register = () => {
       alert("Passwords do not match");
       return;
     }
-
-    console.log("Registration Data:", formData);
+    fetch(`${import.meta.env.VITE_API_POINT}/api/regester`,{
+      method:"POST",
+      headers:{
+        'Content-Type':"application/json"
+      },
+      body:JSON.stringify(formData)
+    }).then((responce)=>{
+      return responce.json();
+    }).then((res)=>{
+      console.log(res)
+    }).catch((e)=>{
+      console.log(e);
+    })
   };
 
   return (
@@ -65,15 +95,15 @@ const Register = () => {
           {/* Email */}
           <div>
             <label
-              htmlFor="email"
+              htmlFor="userEmail"
               className="mb-2 block text-sm font-medium text-gray-700"
             >
               Email Address
             </label>
 
             <input
-              id="email"
-              name="email"
+              id="userEmail"
+              name="userEmail"
               type="email"
               placeholder="Enter your email"
               value={formData.email}

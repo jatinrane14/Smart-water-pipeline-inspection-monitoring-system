@@ -23,15 +23,16 @@ const RECENT_ALERTS = [
   { id: "AL-04", type: "Maintenance overdue", detail: "MT-3002 — Sudama Nagar Branch", time: "3 days ago", level: "Warning" },
 ];
 function DashboardSection({PIPELINES}) {
-  const conditionCounts = PIPELINES.reduce((acc, p) => {
-    acc[p.condition] = (acc[p.condition] || 0) + 1;
+  const conditionCounts = PIPELINES?.reduce((acc, p) => {
+    acc[p.conditionStatus] = (acc[p.conditionStatus] || 0) + 1;
     return acc;
   }, {});
+  console.log(conditionCounts)
   const conditionRows = [
-    { label: "Normal", key: "Normal", color: "bg-blue-600" },
-    { label: "Moderate", key: "Moderate", color: "bg-amber-500" },
+    { label: "HEALTHY", key: "HEALTHY", color: "bg-blue-600" },
+    { label: "Moderate", key: "MODERATE", color: "bg-amber-500" },
     { label: "Damaged", key: "Damaged", color: "bg-red-500" },
-    { label: "Critical", key: "Critical", color: "bg-red-700" },
+    { label: "Critical", key: "CRITICAL", color: "bg-red-700" },
   ];
   const maxCount = Math.max(...conditionRows.map((r) => conditionCounts[r.key] || 0), 1);
 

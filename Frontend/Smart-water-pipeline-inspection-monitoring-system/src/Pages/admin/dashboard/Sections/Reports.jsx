@@ -3,12 +3,12 @@ import { FileText,Download } from "lucide-react";
 
 
 const REPORT_TYPES = [
-  { id: "RPT-1", name: "Pipeline Inspection Report", desc: "Per-pipeline inspection history and findings." },
-  { id: "RPT-2", name: "AI Defect Analysis Report", desc: "Aggregated AI-detected defects and confidence scores." },
-  { id: "RPT-3", name: "Leakage Report", desc: "Leak events, sources and resolution timelines." },
-  { id: "RPT-4", name: "Maintenance Report", desc: "Work orders, teams and completion status." },
-  { id: "RPT-5", name: "Complaint Report", desc: "Citizen complaints by type, ward and status." },
-  { id: "RPT-6", name: "Monthly Pipeline Condition Report", desc: "Network-wide condition summary for the month." },
+  { id: "RPT-1", name: "Pipeline Inspection Report", desc: "Per-pipeline inspection history and findings." ,link:"http://localhost:5173/AQUA_SENTRY_Pipeline_Inspection_Report.pdf"},
+  { id: "RPT-2", name: "AI Defect Analysis Report", desc: "Aggregated AI-detected defects and confidence scores." ,link:"/AQUA_SENTRY_Pipeline_Inspection_Report.pdf"},
+  { id: "RPT-3", name: "Leakage Report", desc: "Leak events, sources and resolution timelines." ,link:"/AQUA_SENTRY_Leakage_Report.pdf"},
+  { id: "RPT-4", name: "Maintenance Report", desc: "Work orders, teams and completion status." ,link:"/AQUA_SENTRY_Maintenance_Report.pdf"},
+  { id: "RPT-5", name: "Complaint Report", desc: "Citizen complaints by type, ward and status." ,link:"/AQUA_SENTRY_Pipeline_Inspection_Report.pdf"},
+  { id: "RPT-6", name: "Monthly Pipeline Condition Report", desc: "Network-wide condition summary for the month." ,link:"/AQUA_SENTRY_Monthly_Pipeline_Condition_Report.pdf"},
 ];
 
 
@@ -30,8 +30,8 @@ function ReportsSection() {
               </div>
             </div>
             <div className="flex flex-col gap-1 text-xs font-medium text-blue-700 whitespace-nowrap">
-              <button className="hover:underline text-left">View</button>
-              <button className="hover:underline text-left">Generate</button>
+              <button className="hover:underline text-left" onClick={() => window.location.href = r.link}>View</button>
+              <button className="hover:underline text-left" >Generate</button>
               <button className="hover:underline text-left flex items-center gap-1">
                 <Download size={12} /> Download PDF
               </button>

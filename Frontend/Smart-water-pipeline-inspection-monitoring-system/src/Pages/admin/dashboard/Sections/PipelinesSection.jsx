@@ -16,21 +16,22 @@ function PipelinesSection({PIPELINES}) {
   const [pipelines, setPipelines] = useState(PIPELINES);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({
-    id: "", name: "", diameter: "", material: "", location: "", length: "", installDate: "", status: "Active",
+    pipelineCode: "", pipelineName: "", diameterMm: "", material: "", location: "", length: "", installDate: "", operationalStatus: "Active",
   });
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
-  }
-
+  } 
+  console.log(form);
+  
   function handleSubmit(e) {
     e.preventDefault();
     if (!form.id || !form.name) return;
     setPipelines([
-      { ...form, condition: "Normal", lastInspection: "-", path: [] },
+      { ...form, conditionStatus: "Normal", lastInspection: "-", path: [] },
       ...pipelines,
     ]);
-    setForm({ id: "", name: "", diameter: "", material: "", location: "", length: "", installDate: "", status: "Active" });
+    setForm({ id: "", name: "", diameterMm: "", material: "", location: "", lengthM: "", installDate: "", status: "Active" });
     setShowAdd(false);
   }
 
@@ -40,15 +41,15 @@ function PipelinesSection({PIPELINES}) {
       <Toolbar searchPlaceholder="Search pipelines..." onAddClick={() => setShowAdd(true)} addLabel="Add Pipeline" />
       <DataTable
         columns={[
-          { key: "id", label: "Pipeline ID" },
-          { key: "name", label: "Pipeline Name" },
-          { key: "diameter", label: "Diameter" },
+          { key: "pipelineCode", label: "Pipeline ID" },
+          { key: "pipelineName", label: "Pipeline Name" },
+          { key: "diameterMm", label: "Diameter" },
           { key: "material", label: "Material" },
           { key: "location", label: "Location" },
           { key: "length", label: "Length" },
-          { key: "condition", label: "Condition", render: (r) => <StatusBadge value={r.condition} /> },
-          { key: "lastInspection", label: "Last Inspection" },
-          { key: "status", label: "Status", render: (r) => <StatusBadge value={r.status} /> },
+          { key: "conditionStatus", label: "Condition", render: (r) => <StatusBadge value={r.conditionStatus} /> },
+          { key: "recordedAt", label: "Last Inspection" },
+          { key: "status", label: "Status", render: (r) => <StatusBadge value={r.operationalStatus} /> },
           { key: "actions", label: "Actions", render: () => <RowActions onView={() => {}} onEdit={() => {}} onDelete={() => {}} /> },
         ]}
         rows={pipelines}
@@ -56,12 +57,12 @@ function PipelinesSection({PIPELINES}) {
 
       <Modal open={showAdd} onClose={() => setShowAdd(false)} title="Add Pipeline" wide>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-x-4">
-          <Field label="Pipeline ID" name="id" value={form.id} onChange={handleChange} required />
+          <Field label="Pipeline ID" name="id" value={form.pipelineCode} onChange={handleChange} required />
           <Field label="Pipeline Name" name="name" value={form.name} onChange={handleChange} required />
           <Field label="Diameter (e.g. 150mm)" name="diameter" value={form.diameter} onChange={handleChange} />
           <Field label="Material" name="material" value={form.material} onChange={handleChange} />
           <Field label="Location" name="location" value={form.location} onChange={handleChange} />
-          <Field label="Length" name="length" value={form.length} onChange={handleChange} />
+          <Field label="Length" name="length" value={form.lengthM} onChange={handleChange} />
           <Field label="Installation Date" name="installDate" type="date" value={form.installDate} onChange={handleChange} />
           <label className="block mb-3">
             <span className="block text-xs font-medium text-gray-600 mb-1">Status</span>

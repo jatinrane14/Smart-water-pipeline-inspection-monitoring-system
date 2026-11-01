@@ -1,4 +1,11 @@
-function EventsSection() {
+import { useState } from "react";
+import PageHeader from "../../common/Shared UI Primitives/PageHeader";
+import { AlertTriangle } from "lucide-react";
+import DataTable
+ from "../../common/Shared UI Primitives/DataTable";
+ import StatusBadge from "../../common/Shared UI Primitives/StatusBadge";
+ import RowActions from "../../common/RowActions";
+function EventsSection({INITIAL_EVENTS}) {
   const [events, setEvents] = useState(INITIAL_EVENTS);
 
   function simulateEvent() {
